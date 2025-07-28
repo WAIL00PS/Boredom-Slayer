@@ -1,0 +1,867 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Boredom Slayer</title>
+    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+    />
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap");
+      body {
+        font-family: "Poppins", sans-serif;
+        margin: 0;
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        min-height: 100vh;
+        background-color: #0c0c17;
+        color: #fff;
+        text-align: center;
+        position: relative;
+        line-height: 1.6;
+        box-sizing: border-box;
+      }
+      body::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background-image: radial-gradient(
+          circle,
+          rgba(167, 167, 167, 0.84) 1px,
+          transparent 1px
+        );
+        background-size: 20px 20px;
+        mask-image: radial-gradient(
+          circle at center,
+          rgba(0, 0, 0, 1) 0%,
+          rgba(0, 0, 0, 0.4) 50%,
+          rgba(0, 0, 0, 0) 100%
+        );
+        -webkit-mask-image: radial-gradient(
+          circle at center,
+          rgba(0, 0, 0, 1) 0%,
+          rgba(0, 0, 0, 0.4) 50%,
+          rgba(0, 0, 0, 0) 100%
+        );
+        z-index: 0;
+        pointer-events: none;
+      }
+      .card {
+        background: #10101c;
+        padding: 45px;
+        border-radius: 25px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        max-width: 650px;
+        width: 100%;
+        border: 1px solid #20313e;
+        z-index: 1;
+      }
+
+      h1 {
+        color: white;
+        font-size: 2.5em;
+        margin-bottom: 15px;
+      }
+
+      p {
+        color: white;
+        font-size: 1.1em;
+        margin-bottom: 25px;
+      }
+
+      .activity-display {
+        min-height: 100px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 2em;
+        font-weight: bold;
+        color: #ff9f1c;
+        margin-bottom: 30px;
+        transition: transform 0.3s ease-out, opacity 0.3s ease-out;
+      }
+
+      .activity-display.fade-in {
+        opacity: 1;
+        transform: translateY(0);
+      }
+      .activity-display.fade-out {
+        opacity: 0;
+        transform: translateY(-10px);
+      }
+
+      .generate-button {
+        background: linear-gradient(45deg, #4299e1 0%, #3182ce 100%);
+        color: white;
+        padding: 15px 30px;
+        border: none;
+        border-radius: 8px;
+        font-size: 1.1em;
+        cursor: pointer;
+        transition: background 0.3s ease, transform 0.1s ease;
+      }
+
+      .generate-button:hover {
+        background: linear-gradient(45deg, #3182ce 0%, #2b6cb0 100%);
+        transform: translateY(-3px);
+      }
+
+      .generate-button:active {
+        transform: translateY(0);
+      }
+
+      .date-attribution {
+        position: absolute;
+        bottom: 10px;
+        left: 20px;
+        font-size: 0.8rem;
+        color: rgba(255, 255, 255, 0.511);
+        text-transform: uppercase;
+        letter-spacing: 1px;
+      }
+      .vibe-attribution {
+        position: absolute;
+        bottom: 10px;
+        right: 20px;
+        font-size: 0.8rem;
+        color: rgba(255, 255, 255, 0.1);
+        text-transform: uppercase;
+        letter-spacing: 1px;
+      }
+
+      @media (max-width: 768px) {
+        body {
+          padding: 15px;
+        }
+        .card {
+          padding: 30px 25px;
+          border-radius: 20px;
+        }
+        h1 {
+          font-size: 2em;
+        }
+        p {
+          font-size: 1em;
+        }
+        .activity-display {
+          font-size: 1.5em;
+          min-height: 80px;
+        }
+        .generate-button {
+          padding: 12px 20px;
+          font-size: 0.95em;
+        }
+        .date-attribution {
+          font-size: 0.65rem;
+          left: 15px;
+          bottom: 5px;
+        }
+        .vibe-attribution {
+          font-size: 0.65rem;
+          right: 15px;
+          bottom: 5px;
+        }
+      }
+
+      @media (max-width: 480px) {
+        body {
+          padding: 50px;
+        }
+        .card {
+          padding: 25px 20px;
+          border-radius: 15px;
+        }
+        h1 {
+          font-size: 1.8em;
+          margin-bottom: 10px;
+        }
+        p {
+          font-size: 0.95em;
+          margin-bottom: 20px;
+        }
+        .activity-display {
+          font-size: 1.3em;
+          min-height: 70px;
+          margin-bottom: 25px;
+        }
+        .generate-button {
+          font-size: 0.9em;
+          padding: 10px 18px;
+        }
+        .date-attribution {
+          font-size: 0.6rem;
+          left: 10px;
+          bottom: 5px;
+        }
+        .vibe-attribution {
+          font-size: 0.6rem;
+          right: 10px;
+          bottom: 5px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="card">
+      <h1>WHAT TO DO TODAY?</h1>
+      <p>Get a fun and functional idea to make the most of your day!</p>
+
+      <div id="activityDisplay" class="activity-display">
+        Click to get an idea!
+      </div>
+
+      <button id="generateButton" class="generate-button">
+        Give me an idea!
+      </button>
+    </div>
+
+    <div class="date-attribution" id="currentDate">Loading date...</div>
+    <div class="vibe-attribution">Vibe-coded by WAI • 2025</div>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        const activities = [
+          "Read a chapter of a book",
+          "Write down 3 things you're grateful for",
+          "Call a friend or family member",
+          "Do 15 minutes of stretching",
+          "Organize one small drawer or shelf",
+          "Learn a new word (and its meaning!)",
+          "Take a 20-minute walk outside",
+          "Listen to a podcast episode",
+          "Plan tomorrow's top 3 tasks",
+          "Try a 5-minute meditation",
+          "Journal about your aspirations",
+          "Practice deep breathing for 5 minutes",
+          "Declutter your email inbox for 10 minutes",
+          "Discover a new song or artist",
+          "Write a thank-you note (physical or digital)",
+          "Review your personal goals for 15 minutes",
+          "Learn a simple knot or craft technique",
+          "Prepare healthy snacks for the next day",
+          "Visualize your perfect day",
+          "Do a quick household chore you've been avoiding",
+          "Read a book",
+          "Write in a journal",
+          "Draw something",
+          "Take a nap",
+          "Stretch your body",
+          "Do some light exercise",
+          "Clean your room",
+          "Make your bed",
+          "Organize your desk",
+          "Rearrange your room",
+          "Listen to music",
+          "Watch a movie",
+          "Watch a YouTube video",
+          "Browse the internet",
+          "Write a to-do list",
+          "Read old messages",
+          "Look through old photos",
+          "Plan your week",
+          "Write a letter",
+          "Write an email",
+          "Play a mobile game",
+          "Do a puzzle",
+          "Color in a coloring book",
+          "Drink a glass of water",
+          "Make tea or coffee",
+          "Eat a snack",
+          "Do laundry",
+          "Fold clothes",
+          "Vacuum the floor",
+          "Wipe your furniture",
+          "Open the window for fresh air",
+          "Light a candle",
+          "Do breathing exercises",
+          "Sit in silence",
+          "Lay on the floor and think",
+          "Text a friend",
+          "Make a phone call",
+          "Take a selfie",
+          "Change clothes",
+          "Try on outfits",
+          "Dance to music",
+          "Sing along to a song",
+          "Write a list of goals",
+          "Make a gratitude list",
+          "Write a list of things you love",
+          "List your favorite movies",
+          "List your favorite songs",
+          "List your favorite meals",
+          "Think about your childhood",
+          "Think about the future",
+          "Daydream",
+          "Watch the rain outside",
+          "Look at the ceiling and relax",
+          "Do nothing for 5 minutes",
+          "Try to stay still for 1 minute",
+          "Balance a pen on your finger",
+          "Count how long you can hold your breath",
+          "Write your name in cursive",
+          "Doodle random shapes",
+          "Pretend to give a speech",
+          "Pretend you're in a movie",
+          "Make a paper airplane",
+          "Draw a map of your room",
+          "Draw your house from memory",
+          "Sketch your hand",
+          "Count how many books you own",
+          "Look under your bed",
+          "Stack items and see how tall it gets",
+          "Tidy one small drawer",
+          "Clean your phone screen",
+          "Delete old photos",
+          "Delete unused apps",
+          "Charge your devices",
+          "Dust your shelves",
+          "Wash a cup or dish",
+          "Write a fake news article",
+          "Write a letter you won’t send",
+          "Try to write with your eyes closed",
+          "Try to balance while standing on one leg",
+          "Touch your toes",
+          "Roll your shoulders",
+          "Roll your neck",
+          "Take deep breaths",
+          "Hum a tune",
+          "Make up a short story",
+          "Record your voice",
+          "Make funny faces in the mirror",
+          "Stare at a candle flame",
+          "Play with a stress ball",
+          "Tap your fingers in rhythm",
+          "Try a tongue twister",
+          "Count backward from 100",
+          "Recite the alphabet slowly",
+          "Say the days of the week backward",
+          "List your favorite foods",
+          "List your favorite holidays",
+          "List your top 5 memories",
+          "Try to remember your first dream",
+          "Try to stay silent for 10 minutes",
+          "Do a wall sit",
+          "Hold a plank",
+          "Lie flat on the floor and stretch",
+          "Stare at one spot and clear your mind",
+          "Write your favorite word",
+          "Make up a new word",
+          "Whisper something to yourself",
+          "Listen to a podcast",
+          "Set a timer and relax",
+          "Think of a new hobby",
+          "Research a random topic",
+          "Take notes on something",
+          "Look at yourself in the mirror",
+          "Clean your mirror",
+          "Wipe down your light switches",
+          "Organize your cables",
+          "Put on lotion",
+          "Trim your nails",
+          "Massage your feet",
+          "Wash your face",
+          "Brush your hair",
+          "Do a face mask",
+          "Try on sunglasses or hats",
+          "Pretend you're a fashion model",
+          "Read a Wikipedia page",
+          "Memorize a quote",
+          "Write a motivational quote",
+          "Decorate your notebook",
+          "Draw hearts or stars",
+          "Make a fake magazine cover",
+          "Write down your habits",
+          "Make a new playlist",
+          "Delete old playlists",
+          "Update your social media bios",
+          "Look through old emails",
+          "Delete old files",
+          "Rename your folders",
+          "Clean your keyboard",
+          "Clean your mouse",
+          "Check your calendar",
+          "Create a reminder",
+          "Make a countdown",
+          "Create a new password",
+          "Read a poem",
+          "Write a poem",
+          "Write a tweet",
+          "Write a fake review",
+          "Look at your fingerprints",
+          "Try to guess the time without looking",
+          "Think of baby names",
+          "Pretend to be a spy",
+          "Pretend to be famous",
+          "Write your future diary",
+          "Make a wishlist",
+          "Read ingredient labels",
+          "Sort your receipts",
+          "Write your shopping list",
+          "Make a meal plan",
+          "Make up a recipe",
+          "Look at your ceiling fan",
+          "Blink slowly and relax",
+          "Try to yawn quietly",
+          "Try to say hello in 10 languages",
+          "Make up a fake language",
+          "Speak in an accent",
+          "List the colors you can see",
+          "List sounds you can hear",
+          "Try a hand shadow puppet",
+          "Mime a scene with no sound",
+          "Pretend you're on a game show",
+          "Make your own quiz",
+          "Give yourself a nickname",
+          "Pretend you're on the moon",
+          "Imagine your dream room",
+          "Imagine your dream job",
+          "Write a fake letter to your pet",
+          "Write a letter to your past self",
+          "Write a letter to your future self",
+          "Practice signing your name",
+          "List things that make you laugh",
+          "List things that annoy you",
+          "Think of your favorite smell",
+          "Think of your favorite place",
+          "Close your eyes and picture a beach",
+          "Close your eyes and picture a forest",
+          "Trace your fingers slowly",
+          "Do finger stretches",
+          "Rub your temples gently",
+          "Tap your head and rub your stomach",
+          "Count how many times you can blink in 30 seconds",
+          "Try to move each toe separately",
+          "Try to write a sentence without using the letter 'e'",
+          "Try to name 20 animals",
+          "Try to name 10 countries",
+          "Try to name 15 fruits",
+          "List everything you touched today",
+          "List everything you said today",
+          "Think about your dream vacation",
+          "Pretend you’re giving a TED Talk",
+          "Practice clapping in rhythm",
+          "Try to write a story in 6 words",
+          "Make a paper fortune teller",
+          "Cut out shapes from paper",
+          "Make a mini book",
+          "Fold paper into an envelope",
+          "Draw your dream home",
+          "Draw a cartoon version of yourself",
+          "Draw your favorite food",
+          "Create a comic strip",
+          "Invent a superhero",
+          "Draw your room from above",
+          "Draw your mood as a shape",
+          "Pretend you're designing a logo",
+          "Design a t-shirt",
+          "Create a fake advertisement",
+          "Make a collage",
+          "Cut out magazine letters",
+          "Create a fake travel brochure",
+          "Draw a map of your ideal city",
+          "Make your own board game pieces",
+          "Draw a dream pet",
+          "Do wall push-ups",
+          "Do leg raises",
+          "Do arm circles",
+          "Do toe touches",
+          "Sit on the floor and stretch",
+          "Balance on one foot with eyes closed",
+          "Do calf raises",
+          "Do side lunges",
+          "Try a yoga pose",
+          "Roll your spine slowly",
+          "Do slow squats",
+          "March in place",
+          "Do shoulder shrugs",
+          "Do ankle rolls",
+          "Do wrist rolls",
+          "Shake your limbs loose",
+          "Try to touch your nose with your tongue",
+          "Try to pat your head and rub your belly",
+          "Crawl like a bear",
+          "Pretend you're doing karate",
+          "Read a short story online",
+          "Find a new word in the dictionary",
+          "Learn 5 facts about a random topic",
+          "Watch a TED Talk",
+          "Listen to an audiobook",
+          "Create a flashcard deck",
+          "Teach yourself a new fact",
+          "Test your general knowledge",
+          "Summarize an article in 1 sentence",
+          "Read something out loud dramatically",
+          "Look at your reflection quietly",
+          "Smile at yourself in the mirror",
+          "Talk about your day to your reflection",
+          "Record a video diary",
+          "Give yourself a compliment",
+          "Look into your own eyes for 1 minute",
+          "Try on different facial expressions",
+          "Practice your signature",
+          "Notice your posture",
+          "Practice eye contact with yourself",
+          "Clean out one shelf",
+          "Sort pens and pencils",
+          "Test all your markers",
+          "Sharpen pencils",
+          "Throw away broken items",
+          "Organize your art supplies",
+          "Rearrange your books",
+          "Stack coins by size",
+          "Clean your closet floor",
+          "Create a donation box",
+          "Write a bucket list",
+          "Write your morning routine",
+          "Write your night routine",
+          "Write your perfect weekend",
+          "List your favorite songs of all time",
+          "List every school you attended",
+          "Write your life timeline",
+          "Write a daily affirmation",
+          "Write about your biggest goal",
+          "Write about your favorite moment ever",
+          "Play with a deck of cards",
+          "Try to learn a card trick",
+          "Shuffle cards differently",
+          "Play solitaire with real cards",
+          "Sort cards by suit",
+          "Stack cards into a pyramid",
+          "Make a card tower",
+          "Flick cards for distance",
+          "Try a memory game with cards",
+          "Invent a solo card game",
+          "Trace your hand",
+          "Trace a coin",
+          "Trace your foot",
+          "Trace a key or object",
+          "Trace a leaf or flower",
+          "Create art from outlines",
+          "Cut out shapes and glue them",
+          "Make paper chains",
+          "Make a pop-up card",
+          "Fold paper into a box",
+          "Write a fake love letter",
+          "Write a secret confession",
+          "Write what you'd say in a speech",
+          "Write a message in code",
+          "Write your name 20 different ways",
+          "Write a joke",
+          "Write a scary short story",
+          "Write a letter to someone famous",
+          "Write a haiku about your day",
+          "Write a funny conversation",
+          "Set a timer and clean for 2 minutes",
+          "Pick up 10 items off the floor",
+          "Wipe down your door handle",
+          "Clean your phone case",
+          "Check under your bed",
+          "Fluff your pillows",
+          "Straighten your chair",
+          "Pick up any trash",
+          "Check expiration dates on snacks",
+          "Lightly dust electronics",
+          "Watch a silent video and guess the plot",
+          "Mute the TV and do your own voiceover",
+          "Act out a scene from memory",
+          "Do charades by yourself",
+          "Mime a movie trailer",
+          "Do a fake weather report",
+          "Pretend you're hosting a game show",
+          "Record a fake commercial",
+          "Make your own news broadcast",
+          "Do an awards show speech",
+          "Make a paper fan",
+          "Make paper snowflakes",
+          "Make a paper hat",
+          "Make a ring out of foil",
+          "Make jewelry from paper clips",
+          "Build a tiny sculpture from trash",
+          "Make a tiny diorama",
+          "Use string or yarn for crafts",
+          "Turn a bottle into a pencil holder",
+          "Decorate your wall with sticky notes",
+          "Whistle a tune",
+          "Snap your fingers to a beat",
+          "Tap on surfaces like a drum",
+          "Try to mimic a song rhythm",
+          "Invent your own rhythm pattern",
+          "Learn to hum harmonies",
+          "Make music using objects in the room",
+          "Sing in gibberish",
+          "Make up your own song lyrics",
+          "Record a music loop",
+          "Stack plastic cups",
+          "Roll a pen back and forth",
+          "Spin a coin",
+          "Toss a coin 100 times",
+          "Bounce a ball against the wall",
+          "Drop items and time them",
+          "Spin a top",
+          "Balance objects on your head",
+          "See how long you can hold something heavy",
+          "Bounce a paper ball in a cup",
+          "Think of 5 things you're proud of",
+          "Think of 3 things you're grateful for",
+          "List what you like about your personality",
+          "List what you like about your appearance",
+          "List what makes you unique",
+          "Visualize your perfect day",
+          "Visualize achieving a goal",
+          "Think about someone you admire",
+          "Imagine your life in 10 years",
+          "Mentally thank people in your life",
+          "Turn off the lights and sit in darkness",
+          "Light a candle and sit quietly",
+          "Stare at a photo and reflect",
+          "Breathe deeply and count to 100",
+          "Close your eyes and listen to silence",
+          "Sit cross-legged and meditate",
+          "Rock back and forth slowly",
+          "Tap slowly on a table and focus",
+          "Watch dust in sunlight",
+          "Watch the shadows on the wall",
+          "Feel different textures around you",
+          "Listen to white noise",
+          "Smell different scented items",
+          "Close your eyes and focus on taste",
+          "Run your fingers through your hair slowly",
+          "Rub your feet on a textured surface",
+          "Tap your fingernails and listen to the sound",
+          "Feel the warmth of a mug in your hand",
+          "Notice the temperature in the room",
+          "Pay attention to your breathing pattern",
+          "Pretend you're exploring a secret room",
+          "Imagine you're invisible",
+          "Imagine you're 5 years old again",
+          "Imagine your room is a spaceship",
+          "Narrate your life like a documentary",
+          "Pretend you're a detective solving a case",
+          "Pretend you’re teaching an online class",
+          "Invent a new kind of animal",
+          "Act like you're meeting an alien",
+          "Imagine you're living in 3025",
+          "Count everything red in the room",
+          "Count all corners and edges you can see",
+          "Observe how light hits objects around you",
+          "Follow the path of a shadow",
+          "Trace a crack or line in the wall visually",
+          "Notice things you've never noticed before",
+          "Listen to distant background noise",
+          "Guess what time it is without checking",
+          "Watch the second hand on a clock for 60 seconds",
+          "Slowly blink 50 times",
+          "Open and close a drawer 10 times",
+          "Tap each item in your room once",
+          "Spin around in a chair slowly",
+          "Press each key on your keyboard",
+          "Flip through a notebook page by page",
+          "Stack and unstack books",
+          "Click a pen over and over",
+          "Shuffle papers for fun",
+          "Arrange your pillows in a new way",
+          "Fold and unfold a blanket repeatedly",
+          "Look closely at your eye in a mirror",
+          "Observe your own breathing in the mirror",
+          "Notice which side of your face moves more when you talk",
+          "Watch your expressions change",
+          "Record yourself talking for 1 minute",
+          "Analyze your tone of voice",
+          "Look at your hands and think about what they’ve done",
+          "Observe your habits in real time",
+          "Count how many times you blink in a minute",
+          "Notice how your body feels from head to toe",
+          "Draw random squiggles and turn them into creatures",
+          "Write 3 random words and make a sentence",
+          "Make a list of completely fake names",
+          "Invent your own planet and describe it",
+          "Draw something only using circles",
+          "Doodle your name in bubble letters",
+          "Write the alphabet backward",
+          "Try to write a sentence where every word starts with the same letter",
+          "List things that float",
+          "Draw an emoji that doesn’t exist",
+          "Set a 1-minute timer and clean",
+          "Try to balance a pencil for 1 minute",
+          "Hold a smile for 60 seconds",
+          "Count how many deep breaths you can take in a minute",
+          "Try to stack 10 items in under a minute",
+          "See how many push-ups you can do in 30 seconds",
+          "See how many items you can name that start with 'S'",
+          "Recite as many capital cities as you can in 2 minutes",
+          "Draw a self-portrait in 1 minute",
+          "See how still you can stay for 60 seconds",
+          "Imagine life with no internet",
+          "Imagine if gravity worked in reverse",
+          "Pretend you woke up as a cat",
+          "Imagine money didn’t exist — what would your job be?",
+          "Pretend you can only speak 10 words per day",
+          "Imagine your room is underwater",
+          "Pretend you're the last person on Earth",
+          "Invent a new law of physics",
+          "Imagine you're on trial for being too kind",
+          "Pretend you have to live in a single memory forever",
+          "Draw a landscape from imagination",
+          "Sketch your dream car",
+          "Draw a building in your city from memory",
+          "Design a flag for a fictional country",
+          "Create a comic strip with no words",
+          "Draw using only dots (stippling)",
+          "Draw a self-portrait with your non-dominant hand",
+          "Design a tattoo you'd get",
+          "Make your own logo",
+          "Create a minimalist poster",
+          "Write a one-page memoir",
+          "Invent a holiday and describe its traditions",
+          "Write a breakup letter from one object to another (e.g., mug to spoon)",
+          "Write a letter to the version of you from 5 years ago",
+          "Invent a mythical creature and describe it",
+          "Write a manifesto",
+          "Write a story from the perspective of an animal",
+          "Write a fake obituary for yourself (as a joke)",
+          "Create your own fable with a moral",
+          "Write a dream diary entry as if you had the wildest dream ever",
+          "Make a DIY bookmark",
+          "Create art using only scraps or trash",
+          "Sew a patch onto an old shirt",
+          "Turn a sock into a puppet",
+          "Design a new board game on paper",
+          "Build a structure using only paper",
+          "Create a greeting card by hand",
+          "Make art using tape and a pen",
+          "Design a city using cardboard",
+          "Create your own coloring page",
+          "Design your ideal workspace",
+          "Sketch a future version of your room",
+          "Plan the layout for a dream café",
+          "Design a product that solves a minor inconvenience",
+          "Invent a new smartphone feature",
+          "Sketch your dream travel itinerary as icons",
+          "Design an app interface on paper",
+          "Create packaging for a product you invent",
+          "Design a poster for an imaginary event",
+          "Create your own planner layout",
+          "Write and act out a monologue",
+          "Improvise a commercial for a random object in your room",
+          "Pretend you're pitching a movie idea and record it",
+          "Write dialogue for a dramatic scene",
+          "Make up a character and answer questions as them",
+          "Create a fake voice-over script",
+          "Design costumes on paper for a fictional movie",
+          "Write a script for a comedy sketch",
+          "Record yourself performing a poem",
+          "Invent a character with a backstory and quirks",
+          "Write lyrics for a song",
+          "Hum a melody and record it",
+          "Make music using household items",
+          "Create a soundscape using ambient noise",
+          "Invent a new musical instrument",
+          "Design a fictional album cover",
+          "Write a jingle for your own brand",
+          "Whistle a tune and add claps as rhythm",
+          "Create a beat using only your body",
+          "Record yourself reading something dramatically",
+          "Invent a tabletop game (rules and all)",
+          "Draw a dungeon or maze layout",
+          "Create a backstory for a video game hero",
+          "Map out an entire fictional world",
+          "Write a quest or side mission idea",
+          "Design a fantasy currency",
+          "Make a monster manual page",
+          "Invent a magic system with rules",
+          "Draw a video game HUD/interface",
+          "Create a player skill tree diagram",
+          "Paint using only 3 colors",
+          "Do a scribble then turn it into art",
+          "Draw without lifting your pen",
+          "Write backwards and mirror it",
+          "Close your eyes and draw a face",
+          "Paint your emotions as abstract shapes",
+          "Create a rhythm-based art piece (e.g., draw to a beat)",
+          "Combine two random animals into one",
+          "Redesign an object to look futuristic",
+          "Make a surreal collage from cutouts",
+          "Draw the same object in 5 different styles",
+          "Turn your mood into a color palette",
+          "Draw your name as a city skyline",
+          "Redesign a famous logo in your own style",
+          "Draw something entirely with lines, no shading",
+          "Create a piece of art based on a song",
+          "Draw something using only one shape (like triangles)",
+          "Design a surreal landscape",
+          "Create a geometric pattern from scratch",
+          "Turn your room into a cartoon sketch",
+          "Write a story that starts with the ending",
+          "Write an entire story with no punctuation",
+          "Write a letter to a place, not a person",
+          "Write a story where the main character is an object",
+          "Write a story using only questions",
+        ];
+
+        const activityDisplay = document.getElementById("activityDisplay");
+        const generateButton = document.getElementById("generateButton");
+        let currentActivity = "";
+
+        const getRandomActivity = () => {
+          let newActivity = "";
+          do {
+            const randomIndex = Math.floor(Math.random() * activities.length);
+            newActivity = activities[randomIndex];
+          } while (newActivity === currentActivity && activities.length > 1);
+          currentActivity = newActivity;
+          return newActivity;
+        };
+
+        const displayActivity = () => {
+          activityDisplay.classList.add("fade-out");
+
+          activityDisplay.addEventListener(
+            "transitionend",
+            function handler() {
+              activityDisplay.removeEventListener("transitionend", handler);
+              activityDisplay.textContent = getRandomActivity();
+              activityDisplay.classList.remove("fade-out");
+              activityDisplay.classList.add("fade-in");
+            },
+            { once: true }
+          );
+
+          if (
+            !activityDisplay.classList.contains("fade-in") &&
+            !activityDisplay.classList.contains("fade-out")
+          ) {
+            activityDisplay.textContent = getRandomActivity();
+            activityDisplay.classList.add("fade-in");
+          }
+        };
+
+        generateButton.addEventListener("click", displayActivity);
+
+        document.addEventListener("keydown", (e) => {
+          if (
+            (e.key === "Enter" || e.key === " " || e.code === "Space") &&
+            document.activeElement.tagName !== "INPUT" &&
+            document.activeElement.tagName !== "TEXTAREA"
+          ) {
+            e.preventDefault();
+            displayActivity();
+          }
+        });
+
+        function displayCurrentDate() {
+          const today = new Date();
+          const options = { year: "numeric", month: "long", day: "numeric" };
+          const dateString = today.toLocaleDateString("en-US", options);
+          document.getElementById("currentDate").textContent = dateString;
+        }
+        window.onload = displayCurrentDate;
+      });
+    </script>
+  </body>
+</html>
