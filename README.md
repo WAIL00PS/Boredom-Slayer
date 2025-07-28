@@ -19,7 +19,7 @@ Boredom Slayer gives you fun activity ideas with just one click.</p>
 
 <h3>🔗 Live Site</h3>
 
-<p> ➡️ Try it now: <a href="https://your-live-site-link.com" target="_blank"><strong>Boredom Slayer</strong></a></p>
+<p> ➡️ Try it now: <a href="https://wail00ps.github.io/Boredom-Slayer/" target="_blank"><strong>Boredom Slayer</strong></a></p>
 
 ---
 
